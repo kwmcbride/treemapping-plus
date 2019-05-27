@@ -12,5 +12,5 @@ For example, if you have a stock portfolio, you can separate it at the most basi
 For this task you could simply use the squarify package. However, if you have higher-level categorical information, such as sector and industry,
 this is where treemapping-plus steps in.
 
-A dataframe with the desired categories and sizing values are required. Continuing with the portfolio example, this would require a column for tickers, sector, and industry.
+A dataframe with the desired categories and sizing values is required. Continuing with the portfolio example, this would require a column for tickers, sector, and industry.
 The sizing column would contain the value of the stock in the portfolio.
