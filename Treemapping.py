@@ -59,10 +59,6 @@ def make_sub_boxes(all_df, rect_df, sizing, main_cat, sub_cat, pad=[1,1]):
     for i in inCat:
 
         cat_df = all_df[all_df[main_cat]==i]
-        
-        print(i)
-        print( rect_df['rect'][i]['dy'])
-        
         height = rect_df['rect'][i]['dy']
         width = rect_df['rect'][i]['dx']
         x = rect_df['rect'][i]['x']
