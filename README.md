@@ -1,9 +1,18 @@
 # treemapping-plus
-Improved Treemapping functionality based on Squarify that includes sub-categories
 
-## Requirements
+This module provides improved treemapping functionality based on the squarify module but includes sub-categories. This module also works with pandas dataframes as input, making it easy to use existing data structures.
 
-This package requires only pandas and the treemapping package squarify
+## Getting Started
+
+This package requires only pandas and the package squarify. At the moment, you can simply place the Treemapping.py file into your path. It will be incorporated into a more comprehensive package in the near future.
+
+### Prerequisites
+
+This is a python module that additionally requires pandas and squarify:
+
+```
+pip install squarify
+```
 
 ## Usage
 
@@ -14,3 +23,16 @@ this is where treemapping-plus steps in.
 
 A dataframe with the desired categories and sizing values is required. Continuing with the portfolio example, this would require a column for tickers, sector, and industry.
 The sizing column would contain the value of the stock in the portfolio.
+
+## Authors
+
+* **Kevin McBride** - [Github Page](https://github.com/kwmcbride)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Acknowledgments
+
+* I thank the creators and contributors of squarify
+
