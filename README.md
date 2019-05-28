@@ -24,6 +24,32 @@ this is where treemapping-plus steps in.
 A dataframe with the desired categories and sizing values is required. Continuing with the portfolio example, this would require a column for tickers, sector, and industry.
 The sizing column would contain the value of the stock in the portfolio.
 
+# Example
+
+Suppose you have the following data stored in a dataframe:
+
+  | ticker | sector | industry | value
+0 |	HON |	Industrials |	Diversified Industrials | 1500
+1 |	CVS |	Healthcare |	Health Care Plans | 1200
+2 |	XOM |	Energy |	Oil & Gas Integrated | 800
+3 |	JNJ |	Healthcare |	Drug Manufacturers - Major | 2000
+4 |	V |	Financial Services |	Credit Services | 2500
+5 |	PEP |	Consumer Defensive |	Beverages - Soft Drinks | 4500
+6 |	AVGO |	Technology |	Semiconductors | 1300
+7 |	HRL |	Consumer Defensive |	Packaged Foods | 2100
+8 |	KO |	Consumer Defensive |	Beverages - Soft Drinks | 3200
+
+Using the function make_treemap, you can generate the coordinates required for plotting a treemap as done using squarify, but with subclasses! For example, you can split the dataframe into sectors, followed by splitting each sector square into industries, and finally each individual stock. In this way you can generate more coordinated treemaps.
+
+The main function returns a dict that contains dataframes with the coordinates for each category. You can use these however you wish for plotting.
+
+'''
+rects = make_treemap(dataframe, ['sector', 'industry', 'ticker'], 'value', **kwargs)
+'''
+
+
+
+
 ## Authors
 
 * **Kevin McBride** - [Github Page](https://github.com/kwmcbride)
