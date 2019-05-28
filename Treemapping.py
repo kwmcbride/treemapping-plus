@@ -8,19 +8,6 @@ Author: Kevin McBride
 import squarify as sq
 import pandas as pd
 
-def sec_add(data, desc, sizing):
-    """Adds the sizing criteria for a category"""
-
-    totals = {}
-    for d in list(data[desc].unique()):
-
-        totals[d] = data[sizing][data[desc]==d].sum()
-
-    totals = pd.DataFrame(pd.Series(totals))
-    totals = totals.sort_values(by=0, ascending=False)
-
-    return totals
-
 def pad_rect(rect, move):
     """Returns padded rectangles given specified padding"""
 
@@ -33,10 +20,11 @@ def pad_rect(rect, move):
 
     return rect
 
-def make_boxes(df_sort, cat, sizing, x, y, height, width, pad=[1,1], main_cat=None):
+def make_boxes(df_data, category, size_factor, x, y, height, width, pad=[1,1], main_cat=None):
     """Generates the initial boxes of the main class"""
 
-    box_list = sec_add(df_sort, cat, sizing)
+    totals = df_data[size_factor].groupby(df_data[category]).sum()
+    box_list = totals.sort_values(ascending=False).to_frame()
     box_list.columns = ['value']
     if main_cat:
         box_list['cat'] = main_cat
@@ -50,10 +38,10 @@ def make_boxes(df_sort, cat, sizing, x, y, height, width, pad=[1,1], main_cat=No
     return box_list
 
 
-def make_sub_boxes(all_df, rect_df, sizing, main_cat, sub_cat, pad=[1,1]):
+def make_sub_boxes(all_df, rect_df, size_factor, main_cat, sub_cat, pad=[1,1]):
     """Generates the boxes within each of the subclasses"""
 
-    rect_dict = {}
+    rect_dict = [] #{}
     inCat = list(all_df[main_cat].unique())
 
     for i in inCat:
@@ -63,16 +51,12 @@ def make_sub_boxes(all_df, rect_df, sizing, main_cat, sub_cat, pad=[1,1]):
         width = rect_df['rect'][i]['dx']
         x = rect_df['rect'][i]['x']
         y = rect_df['rect'][i]['y']
-        rect_dict[i] = make_boxes(cat_df, sub_cat, sizing, x, y, height, width, pad, i)
+        rect_dict.append(make_boxes(cat_df, sub_cat, size_factor, x, y, height, width, pad, i))
 
-    frames = []
-    for dic in rect_dict:
-        frames.append(rect_dict[dic])
-
-    return pd.concat(frames)
+    return pd.concat(rect_dict)
 
 
-def make_treemap(data, cats, sizing, x, y, height, width, pads):
+def make_treemap(data, categories, size_factor, x=0, y=0, height=1200, width=800, pads=[1, 1]):
     """Primary function for generating treemaps with subsections
 
     Parameters:
@@ -92,10 +76,11 @@ def make_treemap(data, cats, sizing, x, y, height, width, pads):
         total width of the treemap (pixels)
     width : int
         total height of the treemap (pixels)
-    pads : dict
-        
+    pads : dict or list of two values
         key is the category, value is the padding for x and y in pixels
         i.e. : {'cat1' : [2, 5], 'cat2' : [2, 2]}
+        - or -
+        a general spacing for all levels : [2, 2]
 
     Returns:
     ________
@@ -104,19 +89,17 @@ def make_treemap(data, cats, sizing, x, y, height, width, pads):
         dataframe with the box sizes as dictionaries for each entry
 
     """
-    
+    if not isinstance(pads, dict):
+        
+        pads = {c: pads for c in categories}     
 
     all_rects = {}
 
-    for i in range(len(cats)):
-
+    for i in range(len(categories)):
         if i == 0:
-
-            all_rects[cats[i]] = make_boxes(data, cats[i], sizing, x, y, height, width, pad=pads[cats[i]])
-
+            all_rects[categories[i]] = make_boxes(data, categories[i], size_factor, x, y, height, width, pad=pads[categories[i]])
         else:
-
-            all_rects[cats[i]] = make_sub_boxes(data, all_rects[cats[i-1]], sizing, cats[i-1], cats[i], pad=pads[cats[i]])
+            all_rects[categories[i]] = make_sub_boxes(data, all_rects[categories[i-1]], size_factor, categories[i-1], categories[i], pad=pads[categories[i]])
 
     return all_rects
 
