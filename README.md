@@ -29,6 +29,7 @@ The sizing column would contain the value of the stock in the portfolio.
 Suppose you have the following data stored in a dataframe:
 
   | ticker | sector | industry | value
+--- | --- | --- | --- | --- |
 0 |	HON |	Industrials |	Diversified Industrials | 1500
 1 |	CVS |	Healthcare |	Health Care Plans | 1200
 2 |	XOM |	Energy |	Oil & Gas Integrated | 800
@@ -43,9 +44,9 @@ Using the function make_treemap, you can generate the coordinates required for p
 
 The main function returns a dict that contains dataframes with the coordinates for each category. You can use these however you wish for plotting.
 
-'''
+```
 rects = make_treemap(dataframe, ['sector', 'industry', 'ticker'], 'value', **kwargs)
-'''
+```
 
 
 
