@@ -20,15 +20,12 @@ def pad_rect(rect, move):
 
     return rect
 
-def make_boxes(df_data, category, size_factor, x, y, height, width, pad=[1,1], main_cat=None):
+def make_boxes(df_data, category, size_factor, x, y, height, width, pad=[1,1]):
     """Generates the coordinates for the boxes of the category"""
 
     totals = df_data[size_factor].groupby(df_data[category]).sum()
     box_list = totals.sort_values(ascending=False).to_frame()
     box_list.columns = ['value']
-    if main_cat:
-        box_list['cat'] = main_cat
-
     box_list['norm'] = sq.normalize_sizes(box_list.value, width, height)
     box_list['rect'] = sq.squarify(box_list.norm, x, y, width, height)
 
