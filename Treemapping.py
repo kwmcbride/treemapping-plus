@@ -8,6 +8,7 @@ Author: Kevin McBride
 import squarify as sq
 import pandas as pd
 
+
 def pad_rect(rect, move):
     """Returns padded rectangles given specified padding"""
 
@@ -20,20 +21,19 @@ def pad_rect(rect, move):
 
     return rect
 
-def make_boxes(df_data, category, size_factor, x, y, height, width, pad=[1,1]):
+def make_boxes(df_data, category, size_factor, x, y, height, width, pad=[1,1], main_cat=None):
     """Generates the coordinates for the boxes of the category"""
 
     totals = df_data[size_factor].groupby(df_data[category]).sum()
     box_list = totals.sort_values(ascending=False).to_frame()
     box_list.columns = ['value']
+    if main_cat:
+        box_list['cat'] = main_cat
     box_list['norm'] = sq.normalize_sizes(box_list.value, width, height)
     box_list['rect'] = sq.squarify(box_list.norm, x, y, width, height)
-
-    for r in box_list['rect']:
-        pad_rect(r, pad)
+    box_list['rect'] = box_list.apply(lambda row: pad_rect(row['rect'], pad), axis=1)
 
     return box_list
-
 
 def make_sub_boxes(all_df, rect_df, size_factor, main_cat, sub_cat, pad=[1,1]):
     """Generates the boxes within each of the higher order categories"""
@@ -51,7 +51,6 @@ def make_sub_boxes(all_df, rect_df, size_factor, main_cat, sub_cat, pad=[1,1]):
         rect_dict.append(make_boxes(cat_df, sub_cat, size_factor, x, y, height, width, pad, i))
 
     return pd.concat(rect_dict)
-
 
 def make_treemap(data, categories, size_factor, x=0, y=0, height=1200, width=800, pads=[1, 1]):
     """Primary function for generating treemaps with subsections
