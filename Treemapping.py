@@ -21,7 +21,7 @@ def pad_rect(rect, move):
     return rect
 
 def make_boxes(df_data, category, size_factor, x, y, height, width, pad=[1,1], main_cat=None):
-    """Generates the initial boxes of the main class"""
+    """Generates the coordinates for the boxes of the category"""
 
     totals = df_data[size_factor].groupby(df_data[category]).sum()
     box_list = totals.sort_values(ascending=False).to_frame()
@@ -39,9 +39,9 @@ def make_boxes(df_data, category, size_factor, x, y, height, width, pad=[1,1], m
 
 
 def make_sub_boxes(all_df, rect_df, size_factor, main_cat, sub_cat, pad=[1,1]):
-    """Generates the boxes within each of the subclasses"""
+    """Generates the boxes within each of the higher order categories"""
 
-    rect_dict = [] #{}
+    rect_dict = []
     inCat = list(all_df[main_cat].unique())
 
     for i in inCat:
@@ -65,9 +65,9 @@ def make_treemap(data, categories, size_factor, x=0, y=0, height=1200, width=800
     data : pandas DataFrame
         data containing the categories and the sizing values
     cats : list of strings
-        categories found as columns in data
+        hierarchical categories for the treemap - from highest to lowest groups (these should be columns in data)
     sizing : str
-        column name of value used in sizing
+        column name of value used in sizing (should be column name in data)
     x : float
         starting value for x (usually 0)
     y : float
@@ -94,11 +94,9 @@ def make_treemap(data, categories, size_factor, x=0, y=0, height=1200, width=800
         pads = {c: pads for c in categories}     
 
     all_rects = {}
+    all_rects[categories[0]] = make_boxes(data, categories[0], size_factor, x=x, y=y, height=height, width=width, pad=pads[categories[0]])
 
-    for i in range(len(categories)):
-        if i == 0:
-            all_rects[categories[i]] = make_boxes(data, categories[i], size_factor, x, y, height, width, pad=pads[categories[i]])
-        else:
+    for i in range(1,len(categories)):
             all_rects[categories[i]] = make_sub_boxes(data, all_rects[categories[i-1]], size_factor, categories[i-1], categories[i], pad=pads[categories[i]])
 
     return all_rects
